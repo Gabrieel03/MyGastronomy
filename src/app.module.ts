@@ -1,6 +1,9 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { Users } from './users/entities/users.entity';
+import { CreateUserDto } from './users/dto/users.dto';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -11,10 +14,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       type: process.env.DATABASE_TYPE as "mongodb",
       url: process.env.DATABASE_URL,
       database: process.env.DATABASE_NAME,
-      entities: [],
+      entities: [Users,CreateUserDto],
       synchronize: true,
       autoLoadEntities: true,
     }),
+    UsersModule,
   ],
   controllers: [],
   providers: [],
