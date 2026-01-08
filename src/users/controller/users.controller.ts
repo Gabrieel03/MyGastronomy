@@ -11,11 +11,8 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) { }
 
   @Post()
-  @ApiOperation({ summary: 'Cria um novo usuário' }) // Descrição da rota
-  @ApiResponse({ status: 201, description: 'Usuário criado com sucesso.' })
-  @ApiResponse({ status: 400, description: 'Dados inválidos (ex: email incorreto, senha fraca).' })
-  @ApiResponse({ status: 409, description: 'Email já cadastrado.' })
   @HttpCode(HttpStatus.CREATED)
+  @ApiOperation({ summary: 'Cria um novo usuário' })
   create(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto);
   }
