@@ -21,6 +21,12 @@ export class RolesGuard implements CanActivate {
     // 2. Pegar o usuário que o JwtStrategy colocou no request
     const { user } = context.switchToHttp().getRequest();
 
+    // --- DEBUG --- (Isso vai aparecer no seu terminal onde roda o npm run start:dev)
+    console.log('--- DEBUG ROLES GUARD ---');
+    console.log('Roles Exigidas:', requiredRoles);
+    console.log('Usuário que chegou:', user);
+    // -------------
+
     // 3. Verificar se o usuário tem a role necessária
     if (!user || !requiredRoles.includes(user.role)) {
        throw new ForbiddenException('Acesso negado: Você não tem permissão de administrador.');
