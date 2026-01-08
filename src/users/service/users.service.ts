@@ -1,86 +1,72 @@
-import { Injectable, ConflictException, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { DeleteResult, Repository } from 'typeorm';
-import { Users } from '../entities/users.entity';
-import { CreateUserDto } from '../dto/users.dto';
-import * as bcrypt from 'bcrypt';
-import { ObjectId } from 'mongodb';
+import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
+import { BcryptService } from "../../auth/bcrypt/bcrypt.service";
+import { CreateUserDto } from "../dto/users.dto";
+import { Users } from "../entities/users.entity";
 
 @Injectable()
 export class UsersService {
     constructor(
         @InjectRepository(Users)
         private usersRepository: Repository<Users>,
+        private bcryptService: BcryptService,
     ) { }
 
     async create(createUserDto: CreateUserDto): Promise<Users> {
-        const emailExists = await this.usersRepository.findOne({
-            where: { email: createUserDto.email },
-        });
 
-        if (emailExists) {
-            throw new ConflictException('Este email já está cadastrado!');
-        }
+        const emailExists = await this.usersRepository.findOne({ where: { email: createUserDto.email } });
+        if (emailExists) throw new ConflictException('Email já cadastrado');
 
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(createUserDto.password, salt);
+        const lastUser = await this.usersRepository.findOne({ order: { id: 'DESC' } as any });
+        const lastNumber = lastUser && lastUser.id ? parseInt(lastUser.id, 10) : 0;
+        const nextId = (lastNumber + 1).toString(); // Gera "1", "2", "3"...
 
+
+        const hashedPassword = await this.bcryptService.hash(createUserDto.password);
         const newUser = this.usersRepository.create({
             ...createUserDto,
             password: hashedPassword,
+            id: nextId,
         });
-
         return this.usersRepository.save(newUser);
     }
 
-    async findAll(): Promise<Users[]> {
+    findAll() {
         return this.usersRepository.find();
     }
 
     async findOne(id: string): Promise<Users> {
-        // 1. Valida se é um ID compatível com Mongo
-        if (!ObjectId.isValid(id)) {
-            throw new NotFoundException('ID inválido ou usuário não encontrado');
-        }
 
         const user = await this.usersRepository.findOne({
-            where: { _id: new ObjectId(id) },
+            where: { id: id }
         });
 
         if (!user) {
-            throw new NotFoundException('Usuário não encontrado');
+            throw new NotFoundException(`Usuário ID ${id} não encontrado`);
         }
 
         return user;
     }
 
-    async findByEmail(email: string): Promise<Users | null> {
-        return this.usersRepository.findOne({ where: { email } });
-    }
-
-    async update(id: string, updateUserDto: Partial<CreateUserDto>): Promise<Users> {
+    // Atualize o update para usar o findOne corrigido
+    async update(id: string, updateUserDto: Partial<CreateUserDto>) {
         const user = await this.findOne(id);
-
-        if (updateUserDto.email && updateUserDto.email !== user.email) {
-            const emailExists = await this.usersRepository.findOne({
-                where: { email: updateUserDto.email },
-            });
-            if (emailExists) {
-                throw new ConflictException('Este email já está cadastrado!');
-            }
-        }
-
+        
         if (updateUserDto.password) {
-            const salt = await bcrypt.genSalt(10);
-            updateUserDto.password = await bcrypt.hash(updateUserDto.password, salt);
+            updateUserDto.password = await this.bcryptService.hash(updateUserDto.password);
         }
 
         Object.assign(user, updateUserDto);
         return this.usersRepository.save(user);
     }
 
-    async remove(id: string): Promise<Users> {
+    async remove(id: string) {
         const user = await this.findOne(id);
         return this.usersRepository.remove(user);
+    }
+
+    async findByEmail(email: string) {
+        return this.usersRepository.findOne({ where: { email } });
     }
 }

@@ -1,11 +1,15 @@
 import { ObjectId } from "mongodb";
-import { Column, CreateDateColumn, Entity, ObjectIdColumn, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, Index, ObjectIdColumn, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity("tb_users")
 export class Users {
 
     @ObjectIdColumn()
     _id: ObjectId;
+
+    @Column({ unique: true })
+    @Index()
+    id: string
 
     @Column()
     name: string;

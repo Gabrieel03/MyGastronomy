@@ -4,6 +4,7 @@ import { CreateUserDto } from '../dto/users.dto';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport'; // Usaremos na Parte 3
 import { RolesGuard } from '../../auth/guard/roles.guard';
+import { UpdateUserDto } from '../dto/update-users.dto';
 
 @ApiTags('Users')
 @ApiBearerAuth()
@@ -42,7 +43,7 @@ export class UsersController {
   @ApiResponse({ status: 200, description: 'Usuário atualizado com sucesso.' })
   @ApiResponse({ status: 404, description: 'Usuário não encontrado.' })
   @ApiResponse({ status: 409, description: 'Tentativa de usar um email que já existe.' })
-  update(@Param('id') id: string, @Body() updateUserDto: Partial<CreateUserDto>) {
+  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.usersService.update(id, updateUserDto);
   }
 
