@@ -17,11 +17,6 @@ export class AuthController {
   @ApiResponse({ status: 401, description: 'Email ou senha incorretos.' })
   @ApiBody({ type: LoginDto })
   async login(@Request() req, @Body() loginDto: LoginDto) {
-    
-    // --- DEBUG (Opcional, pode remover depois) ---
-    console.log('DEBUG CONTROLLER: Quem está no req.user?', req.user);
-    // ---------------------------------------------
-
     return this.authService.login(req.user);
   }
 }

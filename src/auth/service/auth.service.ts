@@ -15,16 +15,10 @@ export class AuthService {
     const user = await this.usersService.findByEmail(email);
 
     if (user && (await this.bcryptService.compare(pass, user.password))) {
-      // --- DEBUG ---
-      console.log('DEBUG AUTH: Usuário encontrado no banco:', user);
-      console.log('DEBUG AUTH: Role do usuário:', user.role);
-      // -------------
-
-      // Em vez de usar spread (...user), retornamos um objeto limpo e explícito
       return {
         _id: user._id,
         email: user.email,
-        role: user.role, // <--- Garantindo que a role vai junto
+        role: user.role,
         name: user.name
       };
     }
@@ -32,14 +26,10 @@ export class AuthService {
   }
 
   async login(user: any) {
-    // --- DEBUG ---
-    console.log('DEBUG LOGIN: Usuário recebido para criar token:', user);
-    // -------------
-
     const payload = { 
       sub: user._id, 
       email: user.email, 
-      role: user.role // <--- Aqui é onde o Token ganha o poder
+      role: user.role
     };
     
     return {
