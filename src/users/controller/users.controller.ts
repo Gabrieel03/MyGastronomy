@@ -3,6 +3,7 @@ import { UsersService } from '../service/users.service';
 import { CreateUserDto } from '../dto/users.dto';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport'; // Usaremos na Parte 3
+import { RolesGuard } from '../../auth/guard/roles.guard';
 
 @ApiTags('Users')
 @ApiBearerAuth()
@@ -20,13 +21,14 @@ export class UsersController {
   @Get()
   @ApiOperation({ summary: 'Lista todos os usuários' })
   @ApiBearerAuth()
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @ApiResponse({ status: 200, description: 'Retorna a lista de usuários.' })
   findAll() {
     return this.usersService.findAll();
   }
 
   @Get(':id')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @ApiOperation({ summary: 'Busca um usuário pelo ID' })
   @ApiResponse({ status: 200, description: 'Usuário encontrado.' })
   @ApiResponse({ status: 404, description: 'Usuário não encontrado.' })
@@ -35,6 +37,7 @@ export class UsersController {
   }
 
   @Patch(':id')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @ApiOperation({ summary: 'Atualiza dados de um usuário' })
   @ApiResponse({ status: 200, description: 'Usuário atualizado com sucesso.' })
   @ApiResponse({ status: 404, description: 'Usuário não encontrado.' })
@@ -44,6 +47,7 @@ export class UsersController {
   }
 
   @Delete(':id')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @ApiOperation({ summary: 'Remove um usuário' })
   @ApiResponse({ status: 204, description: 'Usuário removido com sucesso.' })
   @ApiResponse({ status: 404, description: 'Usuário não encontrado.' })

@@ -4,21 +4,18 @@ import { AuthService } from '../service/auth.service';
 import { LocalAuthGuard } from '../guard/local-auth.guard';
 import { LoginDto } from '../dto/login.dto';
 
-@ApiTags('Auth') // Cria a categoria "Auth" no Swagger
+@ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  @UseGuards(LocalAuthGuard) // Usa a estratégia Local (email/senha) para validar antes
+  @UseGuards(LocalAuthGuard)
   @Post('login')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Realiza o login e retorna o Token JWT' }) // Descrição
+  @ApiOperation({ summary: 'Realiza o login e retorna o Token JWT' })
   @ApiResponse({ status: 200, description: 'Login realizado com sucesso.' })
   @ApiResponse({ status: 401, description: 'Email ou senha incorretos.' })
-  async login(@Body() loginDto: LoginDto) { // @Body faz o Swagger mostrar o formulário JSON
-    // O LocalAuthGuard já valida o usuário e coloca no request
-    // Aqui nós apenas pegamos esse usuário validado e geramos o token
-    // Como o Guard Local já validou, podemos chamar o login direto com os dados do DTO ou user do request
+  async login(@Body() loginDto: LoginDto) {
     return this.authService.login(loginDto);
   }
 }
