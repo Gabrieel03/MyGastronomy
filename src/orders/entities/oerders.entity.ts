@@ -36,7 +36,7 @@ export class Order {
     @Column()
     clientName: string;
 
-    @Column(type => OrderItem)
+    @Column()
     items: OrderItem[];
 
     @Column({ type: 'decimal' })
