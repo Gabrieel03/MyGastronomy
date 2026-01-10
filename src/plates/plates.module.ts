@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Plate } from './entities/plates.entity'; // Importe a Entidade
+import { Plate } from './entities/plates.entity';
 import { PlatesController } from './controller/plates.controller';
 import { PlatesService } from './service/plates.service';
 

@@ -6,7 +6,7 @@ import { AuthController } from './controller/auth.controller';
 import { UsersModule } from '../users/users.module';
 import { JwtStrategy } from './strategy/jwt.strategy';
 import { LocalStrategy } from './strategy/local.strategy';
-import { BcryptService } from './bcrypt/bcrypt.service'; // <--- Importe
+import { BcryptService } from './bcrypt/bcrypt.service';
 import { jwtConstants } from './constants/constats';
 
 @Module({
@@ -23,7 +23,7 @@ import { jwtConstants } from './constants/constats';
     AuthService, 
     LocalStrategy, 
     JwtStrategy, 
-    BcryptService // <--- Adicione aqui
+    BcryptService
   ],
   exports: [AuthService],
 })

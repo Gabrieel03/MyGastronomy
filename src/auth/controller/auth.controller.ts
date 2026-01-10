@@ -1,5 +1,5 @@
 import { Body, Controller, HttpCode, HttpStatus, Post, Request, UseGuards } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger'; // Importações do Swagger
+import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger'; 
 import { AuthService } from '../service/auth.service';
 import { LocalAuthGuard } from '../guard/local-auth.guard';
 import { LoginDto } from '../dto/login.dto';
