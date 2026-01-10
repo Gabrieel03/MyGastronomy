@@ -37,8 +37,8 @@ export class OrdersController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Busca um pedido pelo ID (ex: 001)' })
-  findOne(@Param('id') id: string) {
-    return this.ordersService.findOne(id);
+  findOne(@Param('id') id: string, @Req() req) {
+    return this.ordersService.findOne(id, req.user);
   }
 
   @Patch(':id/status')
