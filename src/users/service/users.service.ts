@@ -3,7 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { BcryptService } from "../../auth/bcrypt/bcrypt.service";
 import { CreateUserDto } from "../dto/users.dto";
-import { Users } from "../entities/users.entity";
+import { Users, UserRole } from "../entities/users.entity";
 
 @Injectable()
 export class UsersService {
@@ -20,7 +20,7 @@ export class UsersService {
 
         const lastUser = await this.usersRepository.findOne({ order: { id: 'DESC' } as any });
         const lastNumber = lastUser && lastUser.id ? parseInt(lastUser.id, 10) : 0;
-        const nextId = (lastNumber + 1).toString(); // Gera "1", "2", "3"...
+        const nextId = (lastNumber + 1).toString();
 
 
         const hashedPassword = await this.bcryptService.hash(createUserDto.password);
@@ -28,6 +28,7 @@ export class UsersService {
             ...createUserDto,
             password: hashedPassword,
             id: nextId,
+            role: createUserDto.role as UserRole,
         });
         return this.usersRepository.save(newUser);
     }
@@ -49,10 +50,9 @@ export class UsersService {
         return user;
     }
 
-    // Atualize o update para usar o findOne corrigido
     async update(id: string, updateUserDto: Partial<CreateUserDto>) {
         const user = await this.findOne(id);
-        
+
         if (updateUserDto.password) {
             updateUserDto.password = await this.bcryptService.hash(updateUserDto.password);
         }

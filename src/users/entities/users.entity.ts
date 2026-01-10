@@ -1,6 +1,11 @@
 import { ObjectId } from "mongodb";
 import { Column, CreateDateColumn, Entity, Index, ObjectIdColumn, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
+export enum UserRole {
+    USER = 'user',
+    ADMIN = 'admin'
+}
+
 @Entity("tb_users")
 export class Users {
 
@@ -20,8 +25,12 @@ export class Users {
     @Column()
     password: string;
 
-    @Column({ default: 'user' })
-    role: string;
+    @Column({
+        type: 'enum',
+        enum: UserRole,
+        default: UserRole.USER
+    })
+    role: UserRole;
 
     @Column({ nullable: true })
     foto: string;

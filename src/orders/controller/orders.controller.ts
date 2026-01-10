@@ -4,10 +4,13 @@ import { CreateOrderDto } from '../dto/create-orders.dto';
 import { UpdateOrderStatusDto } from '../dto/update-orders.dto';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../../auth/guard/jwt-auth.guard';
+import { RolesGuard } from '../../auth/guard/roles.guard';
+import { Roles } from '../../auth/decorators/roles.decorators';
+import { UserRole } from '../../users/entities/users.entity';
 
 @ApiTags('Orders')
 @ApiBearerAuth()
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('orders')
 export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
@@ -20,6 +23,7 @@ export class OrdersController {
   }
 
   @Get()
+  @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: 'Lista todos os pedidos' })
   findAll() {
     return this.ordersService.findAll();
@@ -32,10 +36,9 @@ export class OrdersController {
   }
 
   @Patch(':id/status')
+  @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: 'Atualiza o status do pedido' })
-  // 2. Mude aqui para usar o DTO
   updateStatus(@Param('id') id: string, @Body() updateOrderStatusDto: UpdateOrderStatusDto) {
-      // 3. Passe apenas o status para o service
       return this.ordersService.updateStatus(id, updateOrderStatusDto.status);
   }
 }

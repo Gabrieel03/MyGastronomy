@@ -23,6 +23,6 @@ export class RolesGuard implements CanActivate {
        throw new ForbiddenException('Acesso negado: Você não tem permissão de administrador.');
     }
 
-    return true;
+    return requiredRoles.some((role) => user.role?.includes(role));  
   }
 }
