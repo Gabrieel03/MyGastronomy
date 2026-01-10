@@ -30,6 +30,11 @@ export class CreatePlateDto {
     @IsNotEmpty()
     ingredients: string[];
 
+    @ApiProperty({ example: 10, description: 'Quantidade em estoque' })
+    @IsNumber()
+    @IsNotEmpty()
+    quantity: number;
+
     @ApiProperty({ example: 'https://site.com/foto-macarrao.jpg', description: 'URL da imagem' })
     @IsString()
     @IsNotEmpty()

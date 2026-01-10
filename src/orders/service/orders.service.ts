@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateOrderDto } from '../dto/create-orders.dto';
@@ -20,7 +20,23 @@ export class OrdersService {
 
         for (const itemDto of createOrderDto.items) {
 
-            const plate = await this.platesService.findOne(itemDto.plateId);
+        const plate = await this.platesService.findOne(itemDto.plateId);
+
+        if(!plate){
+            throw new NotFoundException(`Prato #${itemDto.plateId} não encontrado`);
+        }
+
+        if(plate.quantity !== undefined && plate.quantity < itemDto.quantity){
+            throw new BadRequestException(
+                `Estoque insuficiente para o prato '${plate.name}'. Disponivel em estoque ${plate.quantity}, pedido: ${itemDto.quantity}`
+            );
+        }
+
+        if(plate.quantity !== undefined){
+            const novaQuantidade = plate.quantity - itemDto.quantity;
+            await this.platesService.update(plate.id, { quantity: novaQuantidade });
+        }
+
             const orderItem: OrderItem = {
                 plateId: plate.id,
                 name: plate.name,
@@ -35,13 +51,14 @@ export class OrdersService {
         const lastOrder = await this.orderRepository.findOne({
             order: { id: 'DESC' } as any,
         });
+
         const lastNumber = lastOrder ? parseInt(lastOrder.id, 10) : 0;
         const nextId = (lastNumber + 1).toString().padStart(3, '0');
 
         const newOrder = this.orderRepository.create({
             id: nextId,
             userId: user.userId,
-            clientName: user.name || user.email,
+            clientName: user.name || user.email || 'Cliente',
             items: orderItems,
             total: total,
             status: OrderStatus.PENDING,

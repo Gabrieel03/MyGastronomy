@@ -26,6 +26,9 @@ export class Plate {
     ingredients: string[];
 
     @Column()
+    quantity: number
+
+    @Column()
     image: string;
 
     @CreateDateColumn()
