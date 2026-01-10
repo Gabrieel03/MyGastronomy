@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, UseGuards, Request, HttpCode, HttpStatus, Patch } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, UseGuards, Request, HttpCode, HttpStatus, Patch, Req } from '@nestjs/common';
 import { OrdersService } from '../service/orders.service';
 import { CreateOrderDto } from '../dto/create-orders.dto';
 import { UpdateOrderStatusDto } from '../dto/update-orders.dto';
@@ -27,6 +27,12 @@ export class OrdersController {
   @ApiOperation({ summary: 'Lista todos os pedidos' })
   findAll() {
     return this.ordersService.findAll();
+  }
+
+  @Get('me')
+  @ApiOperation({ summary: 'Lista todos os pedidos do usuário logado' })
+  findMyOrders(@Req()req){
+    return this.ordersService.findMyOrders(req.user.userId);
   }
 
   @Get(':id')

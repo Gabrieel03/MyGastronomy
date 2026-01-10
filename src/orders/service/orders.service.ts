@@ -64,6 +64,12 @@ export class OrdersService {
         return order;
     }
 
+    async findMyOrders(userId: string) {
+        return this.orderRepository.find({
+            where: { userId: userId }
+        })
+    }
+
     async updateStatus(id: string, status: OrderStatus) {
         const order = await this.findOne(id);
         order.status = status;

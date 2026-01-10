@@ -11,13 +11,12 @@ import { UserRole } from '../entities/users.entity';
 
 @ApiTags('Users')
 @ApiBearerAuth()
-@UseGuards(JwtAuthGuard, RolesGuard)
+// @UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) { }
 
   @Post()
-  @Roles(UserRole.ADMIN)
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: 'Cria um novo usuário' })
   create(@Body() createUserDto: CreateUserDto) {
