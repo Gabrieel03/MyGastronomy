@@ -44,6 +44,17 @@ export class PlatesService {
         return plate;
     }
 
+    async findByCategoria(category: string) {
+        const plates = await this.plateRepository.find({ where: { category } });
+
+        if (!plates || plates.length === 0) {
+            throw new NotFoundException(`Nenhum prato encontrado para a categoria: ${category}`);
+        }
+
+        return plates;
+
+    }
+
     async update(id: string, updatePlateDto: UpdatePlateDto) {
         const plate = await this.findOne(id);
         Object.assign(plate, updatePlateDto);

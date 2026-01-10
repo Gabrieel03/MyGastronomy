@@ -24,16 +24,22 @@ export class PlatesController {
         return this.platesService.findOne(id);
     }
 
+    @Get('category/:category')
+    @ApiOperation({ summary: 'Filtra pratos por categoria (Ex: Bebida, Prato Principal, Sobremesa)' })
+    findByCategoria(@Param('category') category: string) {
+        return this.platesService.findByCategoria(category);
+    }
+
     // --- ROTAS PROTEGIDAS (Apenas Admin) ---
 
     @Post()
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Roles('admin')
-    @ApiBearerAuth() // Mostra o cadeado no Swagger
+    @ApiBearerAuth()
     @HttpCode(HttpStatus.CREATED)
     @ApiOperation({ summary: 'Cadastra um novo prato (Admin)' })
     create(@Body() createPlateDto: CreatePlateDto) {
-        return this.platesService.create(createPlateDto);
+        return this.platesService.create(createPlateDto)
     }
 
     @Patch(':id')

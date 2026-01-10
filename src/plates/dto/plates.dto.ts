@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsArray, IsNotEmpty, IsNumber, IsString, Min } from "class-validator";
+import { IsArray, IsNotEmpty, IsNumber, IsOptional, IsString, Min } from "class-validator";
 
 export class CreatePlateDto {
 
@@ -37,7 +37,7 @@ export class CreatePlateDto {
 
     @ApiProperty({ example: 'https://site.com/foto-macarrao.jpg', description: 'URL da imagem' })
     @IsString()
-    @IsNotEmpty()
+    @IsOptional()
     image: string;
 
 }
