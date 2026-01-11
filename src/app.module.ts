@@ -8,6 +8,7 @@ import { Users } from './users/entities/users.entity';
 import { UsersModule } from './users/users.module';
 import { OrdersModule } from './orders/orders.module';
 import { Order } from './orders/entities/oerders.entity';
+import { RecomendationsModule } from './recomendations/recomendations.module';
 
 @Module({
   imports: [
@@ -25,7 +26,8 @@ import { Order } from './orders/entities/oerders.entity';
     UsersModule,
     AuthModule,
     PlatesModule,
-    OrdersModule
+    OrdersModule,
+    RecomendationsModule,
   ],
   controllers: [],
   providers: [],
