@@ -1,98 +1,169 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# 🍽️ My Gastronomy Backend
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Bem-vindo ao repositório do backend do **My Gastronomy**. Esta é uma API robusta desenvolvida com **NestJS** para gerenciar um sistema de restaurante e delivery, oferecendo funcionalidades completas para gestão de usuários, pratos, pedidos e recomendações inteligentes via IA.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## 🚀 Sobre o Projeto
 
-## Description
+O **My Gastronomy Backend** foi projetado para ser a espinha dorsal de uma aplicação de entrega de comida. Ele gerencia todo o ciclo de vida do pedido, desde a autenticação do usuário até a entrega, passando pelo gerenciamento do cardápio. Além disso, integra-se com a **Google Gemini AI** para oferecer recomendações de harmonização de bebidas baseadas no prato escolhido pelo cliente.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+### ✨ Principais Funcionalidades
 
-## Project setup
+-   **Autenticação e Usuários**:
+    -   Cadastro de usuários e login (JWT).
+    -   Controle de acesso baseado em cargos (Admin/User).
+-   **Gestão de Cardápio (Pratos)**:
+    -   CRUD completo de pratos (Nome, Descrição, Preço, Categoria, Ingredientes).
+    -   Suporte para upload de imagens (URL).
+-   **Gestão de Pedidos**:
+    -   Criação de pedidos com múltiplos itens.
+    -   Acompanhamento de status (Pendente, Preparando, Entregue, Cancelado).
+    -   Cálculo automático de totais.
+-   **IA Sommelier (Recomendações)**:
+    -   Sugestão inteligente de bebidas para harmonizar com o prato escolhido, utilizando a API do Google Gemini.
+-   **Documentação Interativa**:
+    -   Swagger UI disponível para testar todos os endpoints.
 
-```bash
-$ npm install
+## 🛠️ Tecnologias Utilizadas
+
+O projeto utiliza um stack moderno e eficiente:
+
+-   **[NestJS](https://nestjs.com/)**: Framework Node.js progressivo para aplicações server-side escaláveis.
+-   **[TypeScript](https://www.typescriptlang.org/)**: Superset tipado de JavaScript.
+-   **[MongoDB](https://www.mongodb.com/)**: Banco de dados NoSQL orientado a documentos.
+-   **[TypeORM](https://typeorm.io/)**: ORM para interação com o banco de dados.
+-   **[Google Generative AI](https://ai.google.dev/)**: Integração com Gemini para recursos de IA.
+-   **[Swagger](https://swagger.io/)**: Documentação automática da API.
+-   **[Jest](https://jestjs.io/)**: Framework de testes.
+
+## 🧩 Modelo de Entidade e Relacionamento (MER)
+
+Abaixo está o diagrama representando as principais entidades do sistema e seus relacionamentos.
+
+```mermaid
+erDiagram
+    Users ||--o{ Order : "realiza"
+    Order |{--|{ Plate : "contém"
+
+    Users {
+        ObjectId _id
+        string id UK "Indexado"
+        string name
+        string email UK
+        string password
+        enum role "USER | ADMIN"
+        string foto "Opcional"
+        Date createdAt
+        Date updatedAt
+    }
+
+    Plate {
+        ObjectId _id
+        string id UK "Indexado"
+        string name
+        string description
+        number price
+        string category
+        string[] ingredients
+        number quantity
+        string image
+        Date createdAt
+        Date updatedAt
+    }
+
+    Order {
+        ObjectId _id
+        string id UK "Indexado"
+        string userId FK
+        string clientName
+        object[] items
+        decimal total
+        enum status "PENDING | PREPARING | ... "
+        Date createdAt
+        Date updatedAt
+    }
 ```
 
-## Compile and run the project
+> **Nota**: A relação entre `Order` e `Plate` é conceitual, armazenada através do array de itens (`items`) dentro do documento de Pedido no MongoDB (Desnormalização para performance).
+
+## ⚙️ Pré-requisitos
+
+Antes de começar, certifique-se de ter instalado em sua máquina:
+
+-   [Node.js](https://nodejs.org/) (versão 18 ou superior recomendada)
+-   [npm](https://www.npmjs.com/)
+-   Uma instância do [MongoDB](https://www.mongodb.com/) rodando (local ou Atlas)
+
+## 📦 Instalação e Configuração
+
+1.  **Clone o repositório:**
+
+    ```bash
+    git clone https://github.com/Gabrieel03/MyGastronomy.git
+    cd my-gastronomy-backend
+    ```
+
+2.  **Instale as dependências:**
+
+    ```bash
+    npm install
+    ```
+
+3.  **Configuração de Variáveis de Ambiente:**
+
+    Crie um arquivo `.env` na raiz do projeto com base no exemplo abaixo:
+
+    ```env
+    # Exemplo de .env
+    PORT=4000
+    DB_HOST=localhost
+    DB_PORT=27017
+    DB_USERNAME=admin
+    DB_PASSWORD=secret
+    DB_DATABASE=my_gastronomy_db
+    
+    JWT_SECRET=sua_chave_secreta_jwt
+    
+    GEMINI_API_KEY=sua_chave_api_do_google_gemini
+    ```
+
+## ▶️ Executando o Projeto
+
+Para iniciar o servidor em ambiente de desenvolvimento:
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+npm run start:dev
 ```
 
-## Run tests
+O servidor estará rodando em `http://localhost:4000` (ou na porta definida no `.env`).
+
+### Outros comandos:
 
 ```bash
-# unit tests
-$ npm run test
+# Produção
+npm run start:prod
 
-# e2e tests
-$ npm run test:e2e
+# Testes Unitários
+npm run test
 
-# test coverage
-$ npm run test:cov
+# Testes E2E
+npm run test:e2e
 ```
 
-## Deployment
+## 📚 Documentação da API
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+Após iniciar a aplicação, você pode acessar a documentação completa dos endpoints através do Swagger:
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+🔗 **URL do Swagger**: [http://localhost:4000/swagger](http://localhost:4000/swagger)
 
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
-```
+Lá você poderá ver os schemas de dados e testar as requisições (GET, POST, PATCH, DELETE) diretamente pelo navegador.
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+## 🤝 Contribuição
 
-## Resources
+Contribuições são bem-vindas! Sinta-se à vontade para abrir issues ou enviar pull requests.
 
-Check out a few resources that may come in handy when working with NestJS:
+## 📝 Licença
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+Este projeto é [UNLICENSED](LICENSE).
 
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+---
+Desenvolvido por **Gabriel Andrade** 🚀
